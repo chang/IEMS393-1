@@ -95,18 +95,12 @@ def assign_flights():
 		while not is_assigned:
 			for tail_number in assignments.keys():
 				if tail_number.startswith(best_fleet):
-					connecting_flight = assignments[tail_number] and  \
-										is_feasible_connection(flight1=assignments[tail_number][-1], 
-															   flight2=flight, 
-															   fleet=best_fleet, 
-															   flight_data=flight_data)
+					connecting_flight = assignments[tail_number] and is_feasible_connection(flight1=assignments[tail_number][-1], flight2=flight, fleet=best_fleet, flight_data=flight_data)
 
 					# assign the plane to the flight if it is a viable connecting flight or it's an empty plane
 					if connecting_flight or not assignments[tail_number]:
 						if connecting_flight:
-							turn_times.append(get_turntime(flight1=assignments[tail_number][-1], 
-														   flight2=flight, 
-														   flight_data=flight_data))
+							turn_times.append(get_turntime(flight1=assignments[tail_number][-1], flight2=flight, flight_data=flight_data))
 						assignments[tail_number].append(flight)
 
 						print("Output Schedule:", assignments[tail_number])
