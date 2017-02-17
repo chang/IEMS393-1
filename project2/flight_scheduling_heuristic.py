@@ -1,6 +1,6 @@
 """
 Flight Assignment Heuristic
-Project 2
+IEMS 393 Project 2
 Darren, Eric, Jonathan, Katie
 """
 import pandas as pd
@@ -42,10 +42,9 @@ def is_feasible_connection(flight1, flight2, fleet, flight_data):
     takes two flight ids and a potential fleet and returns True if:
     1. flight1's destination connects with flight2's origin
     2. the time gap between flight1 and flight2 is less than the plane's turn time
-    3. ??? block time??
-    4. ??? minimum time ???
     """
     TURNTIME = 30/(60*24)
+    MAX_TURNTIME = 90/(60*24)
 
     flight1_dest = flight_data[flight_data['flight'] == flight1].reset_index().at[0, 'dest']
     flight2_orig = flight_data[flight_data['flight'] == flight2].reset_index().at[0, 'origin']
@@ -55,7 +54,7 @@ def is_feasible_connection(flight1, flight2, fleet, flight_data):
     time_diff = flight2_deptime - flight1_arrtime
 
     # consider adding a max turn time as well, to avoid too much waiting on the ground
-    return (flight1_dest == flight2_orig) and (time_diff >= TURNTIME)
+    return (flight1_dest == flight2_orig) and (MAX_TURNTIME > time_diff > TURNTIME)
 
 
 def read_ampl_data():
@@ -67,17 +66,14 @@ def read_ampl_data():
 
 def assign_flights():
 	"""
-	Flight Scheduling Heuristic
-	a big issue with starting with a tail number and assigning flights until it is full is that
-	the algorithm will assign a flights to a tail until it's full, even if another fleet is a lot more profitable
-	better to iterate through the flights and find the best tail for it with the following condition:
-		if there is a feasible tail number with a flight already, assign the flight to this tail number
-		if there is not a feasible tail number but there are available tail numbers, open a new plane
-		if there is not a feasible tail nor are there any tail numbers in thes best fleet, go to the next best fleet
+	Iterates through flights and find the best tail for it with the following conditions:
+		1. if there is a tail number with a feasible connection flight already, assign the flight to this tail number
+		2. if there is not a feasible tail number but there are available tail numbers, open a new plane
+		3. if there is not a feasible tail nor are there any tail numbers in thes best fleet, go to the next best fleet
 
-	an improvement could be to sort flights by mean or max profitability, so they are filled optimally first
+	Flights are sorted by departure time to aid with scheduling.
 	"""
-	flight_data = pd.read_csv("data/final_flight_data.csv")
+	flight_data = pd.read_csv("data/final_flight_data_truncated.csv")
 	flight_data.loc[:,['a', 'b', 'c', 'd', 'e']] = flight_data.loc[:,['a', 'b', 'c', 'd', 'e']].apply(pd.to_numeric)
 	flight_list = list(flight_data['flight'])
 	assignments = dict((key, []) for key in create_tail_numbers())
@@ -124,6 +120,8 @@ def assign_flights():
 			if not is_assigned and not fleet_order:
 				count_skipped += 1
 				print("Skipping", str(count_skipped))
+				is_assigned = True
+				break
 			elif not is_assigned:
 				best_fleet = fleet_order.pop()
 
@@ -136,7 +134,7 @@ def assign_flights():
 if __name__ == "__main__":
 	(t, turn_times, profit) = assign_flights()
 
-	# write flight assignments to tab delimited file
+	# write flight assignments, turntimes, and profits to tab delimited file
 	out_assignments = open("flight_assignments.txt", "w")
 	out_turntimes = open("turntimes.txt", "w")
 	out_profit = open("profit.txt", "w")
