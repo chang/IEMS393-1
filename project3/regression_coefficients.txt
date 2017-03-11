@@ -1,0 +1,49 @@
+Call:
+lm(formula = formula, data = dat_lm)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-611.35 -155.44  -33.74  175.08 1169.21 
+
+Coefficients:
+                              Estimate Std. Error t value Pr(>|t|)    
+(Intercept)                  1.703e+08  6.188e+07   2.753  0.00994 ** 
+monthOctober                 6.950e+02  3.674e+02   1.892  0.06820 .  
+monthSeptember               1.969e+03  3.205e+02   6.145 9.32e-07 ***
+day_of_month                -5.394e+01  2.971e+01  -1.815  0.07950 .  
+year                        -1.695e+05  6.153e+04  -2.755  0.00987 ** 
+homecoming                  -7.380e+01  2.266e+02  -0.326  0.74691    
+morning_kickoff              3.158e+02  3.043e+02   1.038  0.30764    
+hour                         1.695e+02  8.408e+01   2.016  0.05286 .  
+big_ten                      8.775e+02  1.672e+02   5.250 1.15e-05 ***
+I(day_of_month^2)            2.242e+00  1.139e+00   1.970  0.05818 .  
+I(year^2)                    4.218e+01  1.529e+01   2.758  0.00981 ** 
+monthOctober:day_of_month   -3.143e+01  2.658e+01  -1.183  0.24624    
+monthSeptember:day_of_month -6.536e+01  2.630e+01  -2.485  0.01877 *  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 392.7 on 30 degrees of freedom
+Multiple R-squared:  0.7681,	Adjusted R-squared:  0.6753 
+F-statistic: 8.279 on 12 and 30 DF,  p-value: 1.381e-06
+
+> lm(formula, dat_lm)
+
+Call:
+lm(formula = formula, data = dat_lm)
+
+Coefficients:
+                (Intercept)                 monthOctober  
+                  1.703e+08                    6.950e+02  
+             monthSeptember                 day_of_month  
+                  1.969e+03                   -5.394e+01  
+                       year                   homecoming  
+                 -1.695e+05                   -7.380e+01  
+            morning_kickoff                         hour  
+                  3.158e+02                    1.695e+02  
+                    big_ten            I(day_of_month^2)  
+                  8.775e+02                    2.242e+00  
+                  I(year^2)    monthOctober:day_of_month  
+                  4.218e+01                   -3.143e+01  
+monthSeptember:day_of_month  
+                 -6.536e+01  

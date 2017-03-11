@@ -1,0 +1,60 @@
+---
+title: "Predicting programs sold - new games"
+author: "Eric Chang"
+date: "3/8/2017"
+output: pdf_document
+---
+
+```{r, message=F}
+require(dplyr)
+require(ggplot2)
+
+# prepare data
+source("featurize_data.R")
+
+dat_lm <- filter(dat, !(programs_ordered == programs_sold)) %>% 
+          select(-programs_ordered, -time_kickoff, -percent_male) %>% 
+          filter(coach_pokey != 1) %>%  # take out old coach game
+          select(-coach_pokey) %>% 
+          filter(!(month == "August" & day_of_month == 30 & opponent == "Nebraska")) %>% 
+          select(-opponent) %>% 
+          mutate(year = as.integer(as.character(year))) %>% 
+          filter(!month %in% c("August", "December"))
+
+dat_lm$month <- droplevels(dat_lm$month)
+
+#
+fit_dat_lm <- lm(programs_sold ~ . + month*day_of_month,
+                 select(dat_lm, -morning_kickoff) %>% slice(c(-17, -21)))
+
+summary(fit_dat_lm)
+```
+
+Quick check - these are the same regression coefficients we shared yesterday.
+
+```{r, fig.width=5, fig.height=4}
+preds <- 
+  fit_dat_lm$fitted.values %>% 
+    data.frame()
+preds <- rename(preds, predictions = .)
+ggplot(preds) + 
+  geom_histogram(aes(x=predictions, fill=..count..), bins = 20) +
+  ggtitle("Distribution of predictions")
+```
+
+Fitted vals look good too, all between 1000 and 4000.
+
+\newpage
+
+### Make predictions with new data
+```{r}
+source("create_test_data.R")
+schedule2017_lm
+predict(fit_dat_lm, schedule2017_lm)
+```
+
+
+
+
+
+
